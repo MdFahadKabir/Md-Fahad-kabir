@@ -81,7 +81,7 @@ export const gitProjects = [
     //   "Deeply connected community spaces.",
     //   "Responsive, fluid layout designed to scale effortlessly to tablet/mobile."
     // ],
-    liveUrl: "https://neocon-innovation.vercel.app/",
-    repoUrl: "https://github.com/MdFahadKabir/neocon-innovation.git"
+    liveUrl: "https://www.lubxen.com/",
+    repoUrl: "https://github.com/MdFahadKabir/lubxenWeb.git"
   }
 ];
