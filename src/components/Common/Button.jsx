@@ -38,7 +38,7 @@ export default function Button({ children, onClick, type = "button", className =
       onClick={onClick}
       className={`${baseStyles} ${variants[variant]} ${className}`}
     >
-      <span className="relative z-10">{children}</span>
+      <span className="relative z-10 flex items-center space-x-2">{children}</span>
     </button>
   );
 }

@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { H1, H2, Paragraph } from "../Common/Typography";
 import Button from "../Common/Button";
 import { gitProjects } from "../data/GitProject";
+import { FaGithub } from "react-icons/fa6";
 
 export default function MySingleGitProjectDescription() {
   const { id } = useParams();
@@ -51,8 +52,9 @@ export default function MySingleGitProjectDescription() {
               <Button variant="primary" className="!px-6 !py-2">View Live Project</Button>
             </a>
             <a href={project.repoUrl} target="_blank" rel="noreferrer">
-              <Button variant="outline" className="!px-6 !py-2 flex items-center space-x-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+              <Button variant="outline" className="!px-6 !py-2 flex justify-between items-center space-x-">
+                {/* <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg> */}
+                <FaGithub />
                 <span>GitHub Repo</span>
               </Button>
             </a>
@@ -93,7 +95,7 @@ export default function MySingleGitProjectDescription() {
           </div>
 
           {/* Features Layer */}
-          <div className="glass p-10 rounded-3xl border border-white/5 relative overflow-hidden">
+          {/* <div className="glass p-10 rounded-3xl border border-white/5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-brand-purple/10 rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
             <H2 className="!mb-8">Key Features & Architecture</H2>
             <ul className="space-y-4">
@@ -108,7 +110,7 @@ export default function MySingleGitProjectDescription() {
                 </li>
               ))}
             </ul>
-          </div>
+          </div> */}
           
         </div>
       </section>

@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 
 export default function Navbar() {
   const navRef = useRef(null);
   const linkRefs = useRef([]);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Initial animation for navbar
@@ -35,6 +37,28 @@ export default function Navbar() {
     { name: "Contact", href: "#contact" },
   ];
 
+  const handleNavClick = (e, href) => {
+    e.preventDefault();
+    if (href === "/") {
+      if (location.pathname === "/") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        navigate("/");
+      }
+    } else if (href.startsWith("#")) {
+      if (location.pathname !== "/") {
+        navigate("/" + href);
+      } else {
+        const element = document.querySelector(href);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    } else {
+      navigate(href);
+    }
+  };
+
   return (
     <nav
       ref={navRef}
@@ -50,7 +74,8 @@ export default function Navbar() {
               key={link.name}
               ref={addToRefs}
               href={link.href}
-              className="text-slate-300 hover:text-white hover:text-brand-cyan transition-colors text-sm font-medium uppercase tracking-wider relative group"
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="text-slate-300 hover:text-white hover:text-brand-cyan transition-colors text-sm font-medium uppercase tracking-wider relative group cursor-pointer"
             >
               {link.name}
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-cyan transition-all group-hover:w-full"></span>

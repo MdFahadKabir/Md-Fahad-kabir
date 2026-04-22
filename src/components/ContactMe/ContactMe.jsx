@@ -61,7 +61,7 @@ export default function ContactMe() {
                  </div>
                  <div>
                    <p className="text-sm text-slate-400">Email</p>
-                   <p className="text-white font-medium">hello@portfolio.dev</p>
+                   <p className="text-white font-medium">mdfahadkabirsezan@gmail.com</p>
                  </div>
               </div>
               <div className="flex items-center space-x-4">
@@ -70,7 +70,7 @@ export default function ContactMe() {
                  </div>
                  <div>
                    <p className="text-sm text-slate-400">Location</p>
-                   <p className="text-white font-medium">San Francisco, CA</p>
+                   <p className="text-white font-medium">Dhaka, Bangladesh</p>
                  </div>
               </div>
             </div>

@@ -41,8 +41,8 @@ export default function MyGitProject() {
       <div className="absolute inset-0 bg-brand-cyan/5 -skew-y-3 z-0 transform origin-top-left"></div>
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="mb-16">
-          <h3 className="text-brand-purple font-semibold tracking-wider uppercase text-sm mb-2">Portfolio</h3>
-          <H2>Featured Projects</H2>
+          {/* <h3 className="text-brand-purple font-semibold tracking-wider uppercase text-sm mb-2">Portfolio</h3> */}
+          <H2>Fun Projects</H2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -51,17 +51,28 @@ export default function ThreeCursorRobot() {
       x: cursor.x,
       y: cursor.y,
     };
+    const target = {
+      x: cursor.x,
+      y: cursor.y,
+    };
     let lastMoveAt = performance.now();
     let isMoving = false;
     let isOneShotPlaying = false;
     let robot = null;
     let frameId = 0;
 
+    let isCardHovered = false;
+    let currentCard = null;
+    let cardAttachment = "top";
+    let cardAction = "Dance";
+    let lastActionChangeTime = 0;
+    let currentIdleAction = "Wave";
+
     const fadeToAction = (name, duration) => {
       const next = actionsRef.current[name];
       const current = activeActionRef.current;
-      if (!next) return;
-      if (current && current !== next) current.fadeOut(duration);
+      if (!next || current === next) return;
+      if (current) current.fadeOut(duration);
       next
         .reset()
         .setEffectiveTimeScale(1)
@@ -119,7 +130,6 @@ export default function ThreeCursorRobot() {
         mixerRef.current?.removeEventListener("finished", restore);
         isOneShotPlaying = false;
         clearExpression();
-        fadeToAction(isMoving ? "Walking" : "Wave", 0.2);
       };
       mixerRef.current.addEventListener("finished", restore);
     };
@@ -139,13 +149,15 @@ export default function ThreeCursorRobot() {
         gltf.animations.forEach((clip) => {
           const action = mixer.clipAction(clip);
           if (
-            ["Jump", "Yes", "No", "Wave", "Dance", "ThumbsUp"].includes(
-              clip.name
-            ) ||
-            clip.name === "Death"
+            ["Jump", "Death"].includes(clip.name)
           ) {
             action.clampWhenFinished = true;
             action.loop = THREE.LoopOnce;
+          } else if (
+            ["Yes", "No", "Wave", "Dance", "ThumbsUp"].includes(clip.name)
+          ) {
+            action.clampWhenFinished = false;
+            action.loop = THREE.LoopRepeat;
           }
           actions[clip.name] = action;
         });
@@ -164,6 +176,20 @@ export default function ThreeCursorRobot() {
       cursor.x = event.clientX;
       cursor.y = event.clientY;
       lastMoveAt = performance.now();
+
+      const card = event.target.closest('.robot-interaction-card, .glass, .card');
+      if (card !== currentCard) {
+        currentCard = card;
+        if (card) {
+          isCardHovered = true;
+          const positions = ["top", "left", "right"];
+          cardAttachment = positions[Math.floor(Math.random() * positions.length)];
+          const actions = ["Dance", "Wave", "ThumbsUp", "Yes"];
+          cardAction = actions[Math.floor(Math.random() * actions.length)];
+        } else {
+          isCardHovered = false;
+        }
+      }
     };
     window.addEventListener("mousemove", onMouseMove);
     const onMouseDown = (event) => {
@@ -185,21 +211,79 @@ export default function ThreeCursorRobot() {
       const delta = clock.getDelta();
       if (mixerRef.current) mixerRef.current.update(delta);
 
-      follower.x = THREE.MathUtils.lerp(follower.x, cursor.x, 0.22);
-      follower.y = THREE.MathUtils.lerp(follower.y, cursor.y, 0.22);
+      if (isCardHovered && currentCard) {
+        const rect = currentCard.getBoundingClientRect();
+        if (cardAttachment === "top") {
+          target.x = rect.left + rect.width / 2;
+          target.y = rect.top - 20;
+        } else if (cardAttachment === "left") {
+          target.x = rect.left - 40;
+          target.y = rect.top + rect.height / 2;
+        } else if (cardAttachment === "right") {
+          target.x = rect.right + 40;
+          target.y = rect.top + rect.height / 2;
+        }
+      } else {
+        target.x = cursor.x;
+        target.y = cursor.y;
+      }
+
+      const dx = target.x - follower.x;
+      const dy = target.y - follower.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance > 2) {
+         const maxSpeed = 15;
+         const followSpeed = distance * 0.15;
+         const actualSpeed = Math.min(maxSpeed, followSpeed);
+         follower.x += (dx / distance) * actualSpeed;
+         follower.y += (dy / distance) * actualSpeed;
+      } else {
+         follower.x = target.x;
+         follower.y = target.y;
+      }
+
       const offsetX = 26;
       const offsetY = 18;
       container.style.transform = `translate3d(${follower.x + offsetX}px, ${follower.y + offsetY}px, 0)`;
 
-      const movingNow = performance.now() - lastMoveAt < 120;
-      if (!isOneShotPlaying && movingNow !== isMoving) {
-        isMoving = movingNow;
-        fadeToAction(isMoving ? "Walking" : "Wave", 0.2);
+      const isWalking = distance > 25;
+
+      if (performance.now() - lastActionChangeTime > 4000) {
+        const pool = ["Dance", "Wave", "ThumbsUp", "Yes", "No"];
+        cardAction = pool[Math.floor(Math.random() * pool.length)];
+        currentIdleAction = pool[Math.floor(Math.random() * pool.length)];
+        lastActionChangeTime = performance.now();
       }
 
-      if (robot) {
-        const normalizedX = (cursor.x / window.innerWidth) * 2 - 1;
-        robot.rotation.y = THREE.MathUtils.lerp(robot.rotation.y, normalizedX * 0.9, 0.1);
+      if (!isOneShotPlaying) {
+        if (isWalking) {
+           fadeToAction("Walking", 0.2);
+           if (robot) {
+              const targetRotationY = dx > 0 ? 0.8 : -0.8;
+              robot.rotation.y = THREE.MathUtils.lerp(robot.rotation.y, targetRotationY, 0.1);
+           }
+        } else {
+           if (isCardHovered) {
+               fadeToAction(cardAction, 0.2);
+               if (robot) {
+                 const normalizedX = (cursor.x / window.innerWidth) * 2 - 1;
+                 robot.rotation.y = THREE.MathUtils.lerp(robot.rotation.y, normalizedX * 0.9, 0.1);
+               }
+           } else {
+               const movingNow = performance.now() - lastMoveAt < 120;
+               fadeToAction(movingNow ? "Walking" : currentIdleAction, 0.2);
+               if (robot) {
+                 if (movingNow) {
+                   const rotationTarget = (cursor.x - follower.x) > 0 ? 0.8 : -0.8;
+                   robot.rotation.y = THREE.MathUtils.lerp(robot.rotation.y, rotationTarget, 0.1);
+                 } else {
+                   const normalizedX = (cursor.x / window.innerWidth) * 2 - 1;
+                   robot.rotation.y = THREE.MathUtils.lerp(robot.rotation.y, normalizedX * 0.9, 0.1);
+                 }
+               }
+           }
+        }
       }
 
       renderer.render(scene, camera);

@@ -43,7 +43,7 @@ export default function Hero() {
             I craft modern, highly animated web experiences that merge stunning visual design with seamless performance. Let's build something extraordinary together.
           </Paragraph>
           <div className="flex space-x-4 pt-4">
-            <a href="#projects">
+            <a href="#experience">
                <Button variant="primary">View My Work</Button>
             </a>
             <a href="/Md_Fahad_Kabir.pdf" download="Md_Fahad_Kabir_CV.pdf">
