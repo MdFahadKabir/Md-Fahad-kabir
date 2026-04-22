@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { H1, Paragraph } from "../Common/Typography";
 import Button from "../Common/Button";
@@ -9,6 +9,37 @@ export default function Hero() {
   const containerRef = useRef(null);
   const textRef = useRef(null);
   const imageRef = useRef(null);
+  const titleRef = useRef(null);
+
+  const titles = [
+    "Creative Developer",
+    "Frontend Developer",
+    "React Specialist",
+    "Interactive Coder",
+    "UI/UX Enthusiast"
+  ];
+  const [titleIndex, setTitleIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      gsap.to(titleRef.current, {
+        y: 20,
+        opacity: 0,
+        duration: 0.3,
+        ease: "power2.in",
+        onComplete: () => {
+          setTitleIndex((prev) => (prev + 1) % titles.length);
+          gsap.fromTo(
+            titleRef.current,
+            { y: -20, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.3, ease: "power2.out" }
+          );
+        },
+      });
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const tl = gsap.timeline();
@@ -37,7 +68,7 @@ export default function Hero() {
             WELCOME TO MY WORLD
           </span>
           <H1>
-            Hi, I'm a <span className="bg-gradient-to-r from-brand-cyan to-brand-purple bg-clip-text text-transparent">Creative Developer</span>
+            Hi, I'm a <span ref={titleRef} className="inline-block bg-gradient-to-r from-brand-cyan to-brand-purple bg-clip-text text-transparent">{titles[titleIndex]}</span>
           </H1>
           <Paragraph>
             I craft modern, highly animated web experiences that merge stunning visual design with seamless performance. Let's build something extraordinary together.
@@ -51,8 +82,8 @@ export default function Hero() {
             </a>
           </div>
         </div>
-        <div className="relative hidden lg:flex justify-center items-center">
-          <div ref={imageRef} className="relative w-80 h-80 md:w-96 md:h-96 rounded-3xl bg-gradient-to-br from-brand-purple to-brand-cyan p-1 shadow-[0_0_50px_rgba(139,92,246,0.3)]">
+        <div className="relative flex mt-12 lg:mt-0 justify-center items-center">
+          <div ref={imageRef} className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-3xl bg-gradient-to-br from-brand-purple to-brand-cyan p-1 shadow-[0_0_50px_rgba(139,92,246,0.3)]">
              <div className="w-full h-full rounded-[23px] overflow-hidden bg-slate-900 absolute inset-0 m-auto flex justify-center items-center">
                <img 
                  src="/Md_Fahad_Kabir.png" 
