@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { H2 } from "../Common/Typography";
@@ -10,6 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
 export default function EmployeeExperience() {
   const containerRef = useRef(null);
   const itemsRef = useRef([]);
+  const [openCardIndex, setOpenCardIndex] = useState(null);
 
   useEffect(() => {
     itemsRef.current.forEach((item, index) => {
@@ -52,7 +53,8 @@ export default function EmployeeExperience() {
               <div 
                 key={index} 
                 ref={addToRefs}
-                className={`relative flex flex-col md:flex-row items-center justify-between group ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
+                onClick={() => setOpenCardIndex(openCardIndex === index ? null : index)}
+                className={`relative flex flex-col md:flex-row items-center justify-between group cursor-pointer md:cursor-default ${index % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
               >
                 {/* Timeline dot */}
                 <div className="absolute left-4 md:left-1/2 w-4 h-4 rounded-full bg-brand-cyan border-4 border-slate-900 transform -translate-x-1/2 mt-6 md:mt-0 shadow-[0_0_10px_rgba(6,182,212,1)] z-10"></div>
@@ -64,7 +66,7 @@ export default function EmployeeExperience() {
                     <p className="text-slate-400 text-sm leading-relaxed">{exp.description}</p>
                     
                     {exp.projects && exp.projects.length > 0 && (
-                      <div className="max-h-0 opacity-0 overflow-hidden transition-all duration-700 ease-in-out group-hover:max-h-[1000px] group-hover:opacity-100 group-hover:mt-4">
+                      <div className={`overflow-hidden transition-all duration-700 ease-in-out ${openCardIndex === index ? 'max-h-[1000px] opacity-100 mt-4' : 'max-h-0 opacity-0'} md:max-h-0 md:opacity-0 md:group-hover:max-h-[1000px] md:group-hover:opacity-100 md:group-hover:mt-4`}>
                         <div className="pt-4 border-t border-white/10 space-y-4">
                           <p className={`text-brand-cyan text-sm font-semibold mb-2 ${index % 2 === 0 ? 'md:text-right text-left' : 'text-left'}`}>Projects</p>
                           {exp.projects.map((project, pIndex) => (
